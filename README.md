@@ -47,6 +47,13 @@ python run.py -op
 ### ChromeDriver 配置
 确保 `data/canshu.py` 文件中的 `driver_path` 和 `chrome_path` 变量指向正确的 ChromeDriver 和 Chrome 浏览器路径。
 
+### 本项目来自 B站 UP 疯狂的杨CC 二次开发
+### QQ交流群:660264846  B站：疯狂的杨CC
+![image](https://github.com/user-attachments/assets/aa6099f8-d09d-4a93-b781-30ce705499cd)
+### 修改
+* 对比原UP主的代码，做了大量修改，增加了新的功能，如：
+* 添加了代理池的保存功能，将获取到的代理池保存到本地JSON文件 并指定 文件的编码格式 为UTF_8，方便后续使用以及避免文件编码格式造成的乱码。
+* 升级 代码中的不合理的地方 优化代码
 
 
 ## 许可证
