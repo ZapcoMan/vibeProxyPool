@@ -35,7 +35,7 @@ def main():
     """
     # 创建命令行参数解析器
     parser = argparse.ArgumentParser(
-        description="杨CC-获取代理池ip\nVersion：0.4",
+        description="获取代理池ip\nVersion：0.4",
         usage="python run.py [-h] [-z] [-i] [-a] [-pr] [-op] [-O]"
     )
     # 添加各个参数，这里补充上 -O 参数的定义
@@ -67,46 +67,54 @@ def main():
         sys.stdout = redirected_output
 
     all_proxies = []
-    if args.run_all:
-        func_executed = True
-        print('运行所有参数(默认不运行-i，如果你是Windows用户请自行添加-i参数)')
-        all_proxies.extend(zdaye())
+    try:
+        if args.run_all:
+            func_executed = True
+            print('运行所有参数(默认不运行-i，如果你是Windows用户请自行添加-i参数)')
+            all_proxies.extend(zdaye())
+            if args.run_ihuan:
+                all_proxies.extend(ihuan())
+            all_proxies.extend(ip3366())
+            all_proxies.extend(proxylistplus())
+            all_proxies.extend(openproxy())
+        if args.run_zdaye:
+            func_executed = True
+            print("使用 zdaye 获取代理池ip中...（此参数及其容易被封IP，少用！）")
+            all_proxies.extend(zdaye())
         if args.run_ihuan:
+            func_executed = True
+            print("使用 ihuan 获取代理池ip中...")
             all_proxies.extend(ihuan())
-        all_proxies.extend(ip3366())
-        all_proxies.extend(proxylistplus())
-        all_proxies.extend(openproxy())
-    if args.run_zdaye:
-        func_executed = True
-        print("使用 zdaye 获取代理池ip中...（此参数及其容易被封IP，少用！）")
-        all_proxies.extend(zdaye())
-    if args.run_ihuan:
-        func_executed = True
-        print("使用 ihuan 获取代理池ip中...")
-        all_proxies.extend(ihuan())
-    if args.run_ip3366:
-        func_executed = True
-        print('使用ip3366获取代理池中...')
-        all_proxies.extend(ip3366())
-    if args.run_proxylistplus:
-        func_executed = True
-        print('使用 proxylistplu 获取代理池中...')
-        all_proxies.extend(proxylistplus())
-    if args.run_openproxy:
-        func_executed = True
-        print("使用 openproxy 获取代理池中...")
-        all_proxies.extend(openproxy())
+        if args.run_ip3366:
+            func_executed = True
+            print('使用ip3366获取代理池中...')
+            all_proxies.extend(ip3366())
+        if args.run_proxylistplus:
+            func_executed = True
+            print('使用 proxylistplu 获取代理池中...')
+            all_proxies.extend(proxylistplus())
+        if args.run_openproxy:
+            func_executed = True
+            print("使用 openproxy 获取代理池中...")
+            all_proxies.extend(openproxy())
 
-    if not func_executed:
-        parser.print_help()
+        if not func_executed:
+            parser.print_help()
 
-    if args.save_output:
-        print("将 获取到的代理地址池 保存到 本地")
-        # 将代理池地址以 JSON 格式保存到文件中
-        if not os.path.exists(OUTPUT_DIR):
-            os.makedirs(OUTPUT_DIR)
-        with open(os.path.join(OUTPUT_DIR, 'proxies.json'), 'w', encoding='utf-8') as f:
-            json.dump(all_proxies, f, ensure_ascii=False, indent=4)
+        if args.save_output:
+            print("将 获取到的代理地址池 保存到 本地")
+            # 将代理池地址以 JSON 格式保存到文件中
+            if not os.path.exists(OUTPUT_DIR):
+                os.makedirs(OUTPUT_DIR)
+            with open(os.path.join(OUTPUT_DIR, 'proxies.json'), 'w', encoding='utf-8') as f:
+                json.dump(all_proxies, f, ensure_ascii=False, indent=4)
+    except Exception as e:
+        print(f"发生错误: {e}")
+    finally:
+        if args.save_output:
+            sys.stdout = old_stdout
+            if redirected_output:
+                redirected_output.close()
 
 
 if __name__ == "__main__":
