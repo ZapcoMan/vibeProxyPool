@@ -45,9 +45,11 @@ def update_repository():
     """
     try:
         result = subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
-        logging.info(result.stdout)
+        logging.info("更新成功: %s", result.stdout)
     except subprocess.CalledProcessError as e:
-        logging.error(f"更新失败: {e.stderr}")
+        logging.error("更新失败: %s", e.stderr)
+    except FileNotFoundError:
+        logging.error("Git 命令未找到，请确保已安装 Git 并将其添加到系统路径中。")
 
 
 def main():
