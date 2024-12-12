@@ -1,3 +1,4 @@
+#selectedCode:C:\Users\Administrator\Desktop\vibeProxyPool\run.py#L1-L122
 import argparse
 from vibeGet import zdaye, ihuan, ip3366, proxylistplus, openproxy
 import sys
@@ -5,6 +6,7 @@ from io import StringIO
 import re
 import json
 import os
+import subprocess
 
 # 定义输出目录常量
 OUTPUT_DIR = 'output'
@@ -27,6 +29,17 @@ def filter_braces(output):
     return '\n'.join(matches)
 
 
+def update_repository():
+    """
+    更新本地仓库到最新版本。
+    """
+    try:
+        result = subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"更新失败: {e.stderr}")
+
+
 def main():
     """
     主函数。
@@ -35,8 +48,8 @@ def main():
     """
     # 创建命令行参数解析器
     parser = argparse.ArgumentParser(
-        description="获取代理池ip\nVersion：0.4",
-        usage="python run.py [-h] [-z] [-i] [-a] [-pr] [-op] [-O]"
+        description="获取代理池ip\nVersion：1.4",
+        usage="python run.py [-h] [-z] [-i] [-a] [-pr] [-op] [-O] [-u]"
     )
     # 添加各个参数，这里补充上 -O 参数的定义
     parser.add_argument("-z", "--run-zdaye", action="store_true", dest="run_zdaye",
@@ -46,16 +59,22 @@ def main():
     parser.add_argument("-ip36", "--run-ip3366", action="store_true", dest="run_ip3366",
                         help="使用ip3366获取代理持池（中质量/支持全系统）")
     parser.add_argument("-pr", "--run-proxylistplus", action="store_true", dest="run_proxylistplus",
-                        help="使用 proxylistpus 获取代理池ip（中质量/支持全系统）")
+                        help="使用 proxylistplus 获取代理池ip（中质量/支持全系统）")
     parser.add_argument("-a", "--run-all", action="store_true", dest="run_all",
-                        help="运行所有参数（默认不使用-i参数，如果你是Widnows系统，请手动添加-i参数）")
+                        help="运行所有参数（默认不使用-i参数，如果你是Windows系统，请手动添加-i参数）")
     parser.add_argument("-op", "--run-openproxy", action="store_true", dest="run_openproxy",
                         help="使用 openproxy 源获取socks4代理池（中质量/当前全系统可用）")
     parser.add_argument("-O", "--save-output", action="store_true", dest="save_output",
-                        help="将获取到的ip池存放在output目录中的svae.txt文件中")
+                        help="将获取到的ip池存放在output目录中的proxies.json文件中")
+    parser.add_argument("-u", "--update", action="store_true", dest="update",
+                        help="更新本地仓库到最新版本")
 
     # 解析命令行参数
     args = parser.parse_args()
+
+    if args.update:
+        update_repository()
+        return
 
     # 用于记录是否执行了有效参数对应的函数
     func_executed = False
@@ -91,7 +110,7 @@ def main():
             all_proxies.extend(ip3366())
         if args.run_proxylistplus:
             func_executed = True
-            print('使用 proxylistplu 获取代理池中...')
+            print('使用 proxylistplus 获取代理池中...')
             all_proxies.extend(proxylistplus())
         if args.run_openproxy:
             func_executed = True
