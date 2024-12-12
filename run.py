@@ -1,3 +1,4 @@
+#selectedCode:C:\Users\Administrator\Desktop\vibeProxyPool\run.py#L1-L140
 import argparse
 from vibeGet import zdaye, ihuan, ip3366, proxylistplus, openproxy
 import sys
@@ -6,10 +7,13 @@ import re
 import json
 import os
 import subprocess
+import logging
 
 # 定义输出目录常量
 OUTPUT_DIR = 'output'
 
+# 配置日志记录器
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def filter_braces(output):
     """
@@ -34,9 +38,9 @@ def update_repository():
     """
     try:
         result = subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
-        print(result.stdout)
+        logging.info(result.stdout)
     except subprocess.CalledProcessError as e:
-        print(f"更新失败: {e.stderr}")
+        logging.error(f"更新失败: {e.stderr}")
 
 
 def main():
@@ -88,7 +92,7 @@ def main():
     try:
         if args.run_all:
             func_executed = True
-            print('运行所有参数(默认不运行-i，如果你是Windows用户请自行添加-i参数)')
+            logging.info('运行所有参数(默认不运行-i，如果你是Windows用户请自行添加-i参数)')
             all_proxies.extend(zdaye())
             if args.run_ihuan:
                 all_proxies.extend(ihuan())
@@ -97,37 +101,37 @@ def main():
             all_proxies.extend(openproxy())
         if args.run_zdaye:
             func_executed = True
-            print("使用 zdaye 获取代理池ip中...（此参数及其容易被封IP，少用！）")
+            logging.info("使用 zdaye 获取代理池ip中...（此参数及其容易被封IP，少用！）")
             all_proxies.extend(zdaye())
         if args.run_ihuan:
             func_executed = True
-            print("使用 ihuan 获取代理池ip中...")
+            logging.info("使用 ihuan 获取代理池ip中...")
             all_proxies.extend(ihuan())
         if args.run_ip3366:
             func_executed = True
-            print('使用ip3366获取代理池中...')
+            logging.info('使用ip3366获取代理池中...')
             all_proxies.extend(ip3366())
         if args.run_proxylistplus:
             func_executed = True
-            print('使用 proxylistplus 获取代理池中...')
+            logging.info('使用 proxylistplus 获取代理池中...')
             all_proxies.extend(proxylistplus())
         if args.run_openproxy:
             func_executed = True
-            print("使用 openproxy 获取代理池中...")
+            logging.info("使用 openproxy 获取代理池中...")
             all_proxies.extend(openproxy())
 
         if not func_executed:
             parser.print_help()
 
         if args.save_output:
-            print("将 获取到的代理地址池 保存到 本地")
+            logging.info("将 获取到的代理地址池 保存到 本地")
             # 将代理池地址以 JSON 格式保存到文件中
             if not os.path.exists(OUTPUT_DIR):
                 os.makedirs(OUTPUT_DIR)
             with open(os.path.join(OUTPUT_DIR, 'proxies.json'), 'w', encoding='utf-8') as f:
                 json.dump(all_proxies, f, ensure_ascii=False, indent=4)
     except Exception as e:
-        print(f"发生错误: {e}")
+        logging.error(f"发生错误: {e}")
     finally:
         if args.save_output:
             sys.stdout = old_stdout

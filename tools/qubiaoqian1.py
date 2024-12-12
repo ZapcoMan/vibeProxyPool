@@ -1,6 +1,11 @@
 import re
 import requests
 from data import canshu
+import logging
+
+# 配置日志记录器
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def clean_tag(tag):
     """
@@ -12,7 +17,9 @@ def clean_tag(tag):
     返回:
     str: 提取后的文本字符串。
     """
-    return tag.get_text(strip=True)
+    text = tag.get_text(strip=True)
+    logging.debug(f"Cleaned tag text: {text}")
+    return text
 
 
 def parse_table(tbody):
@@ -27,8 +34,10 @@ def parse_table(tbody):
     """
     if tbody:
         tbody_rows = [[clean_tag(td) for td in row.find_all("td")] for row in tbody.find_all("tr")]
+        logging.debug(f"Parsed table rows: {tbody_rows}")
     else:
         tbody_rows = []
+        logging.debug("No tbody found, returning empty list")
 
     return tbody_rows
 
@@ -45,8 +54,10 @@ def ihuan_table(tbody):
     """
     if tbody:
         tbody_rows = [[clean_tag(td) for td in row.find_all("td")] for row in tbody.find_all("tr")]
+        logging.debug(f"Parsed ihuan table rows: {tbody_rows}")
     else:
         tbody_rows = []
+        logging.debug("No tbody found for ihuan, returning empty list")
 
     return tbody_rows
 
@@ -68,7 +79,9 @@ def proxylistplus_table(table):
         tbody_rows = [td_tag.text.strip() for td_tag in td_tags]
         if len(tbody_rows) == 8 and tbody_rows[0] == '' and isinstance(tbody_rows[2], str) and tbody_rows[2].isdigit():
             result_data.append(tbody_rows)
+            logging.debug(f"Added proxylistplus row: {tbody_rows}")
 
+    logging.debug(f"Final proxylistplus result data: {result_data}")
     return result_data
 
 
@@ -98,6 +111,9 @@ def ip3366_table(table):
         if len(cols) == 7:
             row_data = [cols[i].text.strip().replace(key, value) for i, (key, value) in enumerate(replacements.items())]
             tbody_rows.append(row_data)
+            logging.debug(f"Added ip3366 row: {row_data}")
+
+    logging.debug(f"Final ip3366 result data: {tbody_rows}")
     return tbody_rows
 
 
@@ -121,9 +137,10 @@ def openproxy_table(url):
         data = response.text
         pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}:\d+\b'
         ip_port_matches = re.findall(pattern, data)
+        logging.debug(f"Found openproxy IP:Port matches: {ip_port_matches}")
         return ip_port_matches
     except requests.RequestException as e:
-        print(f'请求异常: {e}')
+        logging.error(f'请求异常: {e}')
     except ValueError as e:
-        print(f'值错误: {e}')
+        logging.error(f'值错误: {e}')
     return []
