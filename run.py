@@ -1,4 +1,3 @@
-#selectedCode:C:\Users\Administrator\Desktop\vibeProxyPool\run.py#L1-L122
 import argparse
 from vibeGet import zdaye, ihuan, ip3366, proxylistplus, openproxy
 import sys
@@ -48,7 +47,7 @@ def main():
     """
     # 创建命令行参数解析器
     parser = argparse.ArgumentParser(
-        description="获取代理池ip\nVersion：1.4",
+        description="获取代理池ip\nVersion：1.6",
         usage="python run.py [-h] [-z] [-i] [-a] [-pr] [-op] [-O] [-u]"
     )
     # 添加各个参数，这里补充上 -O 参数的定义
