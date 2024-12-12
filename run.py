@@ -1,19 +1,23 @@
-#selectedCode:C:\Users\Administrator\Desktop\vibeProxyPool\run.py#L1-L140
 import argparse
-from vibeGet import zdaye, ihuan, ip3366, proxylistplus, openproxy
+import json
+import logging
+import os
+import re
+import subprocess
 import sys
 from io import StringIO
-import re
-import json
-import os
-import subprocess
-import logging
+
+from vibeGet import zdaye, ihuan, ip3366, proxylistplus, openproxy
 
 # 定义输出目录常量
 OUTPUT_DIR = 'output'
 
-# 配置日志记录器
+# 配置日志记录器，设置日志级别为 INFO，并指定日志格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# 在模块级别定义 old_stdout
+old_stdout = ""
+
 
 def filter_braces(output):
     """
@@ -35,6 +39,9 @@ def filter_braces(output):
 def update_repository():
     """
     更新本地仓库到最新版本。
+
+    使用 `git pull` 命令从远程仓库拉取最新的代码，并记录日志。
+    如果更新过程中出现错误，记录错误日志。
     """
     try:
         result = subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
@@ -49,12 +56,13 @@ def main():
 
     创建命令行参数解析器，解析用户输入的参数，并根据参数执行相应的功能。
     """
-    # 创建命令行参数解析器
+    global old_stdout
     parser = argparse.ArgumentParser(
-        description="获取代理池ip\nVersion：1.7",
+        description="获取代理池ip\nVersion：1.8",
         usage="python run.py [-h] [-z] [-i] [-a] [-pr] [-op] [-O] [-u]"
     )
-    # 添加各个参数，这里补充上 -O 参数的定义
+
+    # 添加各个参数，每个参数都有特定的功能
     parser.add_argument("-z", "--run-zdaye", action="store_true", dest="run_zdaye",
                         help="使用 zdaye 获取代理池ip(高质量/支持全系统/容易被封ip))")
     parser.add_argument("-i", "--run-ihuan", action="store_true", dest="run_ihuan",
@@ -75,21 +83,27 @@ def main():
     # 解析命令行参数
     args = parser.parse_args()
 
+    # 如果用户请求更新仓库，则调用 update_repository 函数并返回
     if args.update:
         update_repository()
         return
 
     # 用于记录是否执行了有效参数对应的函数
     func_executed = False
+
     # 用于捕获终端输出内容的对象
     redirected_output = None
+    # 如果用户请求保存输出，则重定向标准输出到一个 StringIO 对象
     if args.save_output:
         old_stdout = sys.stdout
         redirected_output = StringIO()
         sys.stdout = redirected_output
 
+    # 存储所有获取到的代理 IP
     all_proxies = []
+
     try:
+        # 如果用户请求运行所有参数
         if args.run_all:
             func_executed = True
             logging.info('运行所有参数(默认不运行-i，如果你是Windows用户请自行添加-i参数)')
@@ -99,40 +113,57 @@ def main():
             all_proxies.extend(ip3366())
             all_proxies.extend(proxylistplus())
             all_proxies.extend(openproxy())
+
+        # 如果用户请求使用 zdaye 获取代理池
         if args.run_zdaye:
             func_executed = True
             logging.info("使用 zdaye 获取代理池ip中...（此参数及其容易被封IP，少用！）")
             all_proxies.extend(zdaye())
+
+        # 如果用户请求使用 ihuan 获取代理池
         if args.run_ihuan:
             func_executed = True
             logging.info("使用 ihuan 获取代理池ip中...")
             all_proxies.extend(ihuan())
+
+        # 如果用户请求使用 ip3366 获取代理池
         if args.run_ip3366:
             func_executed = True
             logging.info('使用ip3366获取代理池中...')
             all_proxies.extend(ip3366())
+
+        # 如果用户请求使用 proxylistplus 获取代理池
         if args.run_proxylistplus:
             func_executed = True
             logging.info('使用 proxylistplus 获取代理池中...')
             all_proxies.extend(proxylistplus())
+
+        # 如果用户请求使用 openproxy 获取代理池
         if args.run_openproxy:
             func_executed = True
             logging.info("使用 openproxy 获取代理池中...")
             all_proxies.extend(openproxy())
 
+        # 如果没有执行任何有效参数对应的函数，打印帮助信息
         if not func_executed:
             parser.print_help()
 
+        # 如果用户请求保存输出
         if args.save_output:
             logging.info("将 获取到的代理地址池 保存到 本地")
-            # 将代理池地址以 JSON 格式保存到文件中
+            # 如果输出目录不存在，则创建目录
             if not os.path.exists(OUTPUT_DIR):
                 os.makedirs(OUTPUT_DIR)
+            # 将代理池地址以 JSON 格式保存到文件中
             with open(os.path.join(OUTPUT_DIR, 'proxies.json'), 'w', encoding='utf-8') as f:
                 json.dump(all_proxies, f, ensure_ascii=False, indent=4)
+
     except Exception as e:
+        # 记录发生的错误
         logging.error(f"发生错误: {e}")
+
     finally:
+        # 恢复标准输出
         if args.save_output:
             sys.stdout = old_stdout
             if redirected_output:
