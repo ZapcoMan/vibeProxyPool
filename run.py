@@ -130,8 +130,11 @@ def main():
 
         # 如果用户请求使用 ip3366 获取代理池
         if args.run_ip3366:
+            # 标记为已执行函数，用于后续判断是否需要执行其他操作
             func_executed = True
+            # 记录日志信息，表明当前正在使用ip3366获取代理池
             logging.info('使用ip3366获取代理池中...')
+            # 将ip3366函数返回的代理列表添加到所有代理中
             all_proxies.extend(ip3366())
 
         # 如果用户请求使用 proxylistplus 获取代理池
