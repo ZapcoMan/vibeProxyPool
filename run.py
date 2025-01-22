@@ -43,12 +43,20 @@ def update_repository():
     使用 `git pull` 命令从远程仓库拉取最新的代码，并记录日志。
     如果更新过程中出现错误，记录错误日志。
     """
+    # 尝试执行 Git 拉取操作以更新项目
     try:
+        # 使用 subprocess.run 方法执行 'git pull' 命令，设置 check=True 以在命令失败时抛出异常
+        # capture_output=True 用于捕获命令的输出，text=True 用于将输出作为文本处理
         result = subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
+        # 如果命令成功执行，记录成功信息到日志
         logging.info("更新成功: %s", result.stdout)
+    # 捕获 CalledProcessError 异常，这表明命令执行失败但找到了 Git 命令
     except subprocess.CalledProcessError as e:
+        # 记录错误信息到日志
         logging.error("更新失败: %s", e.stderr)
+    # 捕获 FileNotFoundError 异常，这表明未找到 Git 命令
     except FileNotFoundError:
+        # 记录错误信息到日志，提示用户检查 Git 安装和系统路径配置
         logging.error("Git 命令未找到，请确保已安装 Git 并将其添加到系统路径中。")
 
 
