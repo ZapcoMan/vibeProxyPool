@@ -34,13 +34,19 @@ def parse_table(tbody):
     返回:
     list: 包含表格数据的二维列表。
     """
+    # 如果tbody存在，则解析其中的表格行
     if tbody:
+        # 使用列表推导式解析每一行中的单元格，并清理每个单元格中的标签
         tbody_rows = [[clean_tag(td) for td in row.find_all("td")] for row in tbody.find_all("tr")]
+        # 日志记录：输出解析后的表格行
         logging.debug(f"Parsed table rows: {tbody_rows}")
     else:
+        # 如果没有tbody，将tbody_rows设置为空列表
         tbody_rows = []
+        # 日志记录：没有找到tbody，返回空列表
         logging.debug("No tbody found, returning empty list")
 
+    # 返回解析后的表格行列表
     return tbody_rows
 
 
