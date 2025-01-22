@@ -132,15 +132,25 @@ def openproxy_table(url):
         if not url.startswith("http"):
             raise ValueError("Invalid URL")
 
+        # 发起GET请求并处理响应
         response = requests.get(url, headers=canshu.url5_headers, timeout=10)
         response.raise_for_status()  # 抛出HTTP错误
         data = response.text
+
+        # 使用正则表达式匹配IP:端口模式
         pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}:\d+\b'
         ip_port_matches = re.findall(pattern, data)
+
+        # 记录匹配到的IP:端口信息
         logging.debug(f"Found openproxy IP:Port matches: {ip_port_matches}")
+
+        # 返回匹配到的IP:端口列表
         return ip_port_matches
     except requests.RequestException as e:
+        # 处理请求异常
         logging.error(f'请求异常: {e}')
     except ValueError as e:
+        # 处理值错误异常
         logging.error(f'值错误: {e}')
+    # 如果发生异常，返回空列表
     return []
