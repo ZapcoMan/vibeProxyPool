@@ -82,6 +82,7 @@ def ihuan():
         # 找到表格
         table = soup.find('table', {'class': 'table table-hover table-bordered'})
 
+        # 如果table对象存在，则对其进行处理
         if table:
             # 提取表格中的每一行数据
             rows = table.find_all('tr')[1:]  # 跳过表头
