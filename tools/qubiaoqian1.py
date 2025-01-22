@@ -74,15 +74,27 @@ def proxylistplus_table(table):
     返回:
     list: 包含表格数据的二维列表。
     """
+    # 初始化结果列表，用于存储满足条件的行数据
     result_data = []
+
+    # 查找表格中所有的<tr>标签
     tr_tags = table.find_all('tr')
+
+    # 遍历每一个<tr>标签
     for tr_tag in tr_tags:
+        # 查找当前<tr>标签下的所有<td>标签
         td_tags = tr_tag.find_all('td')
+
+        # 提取<td>标签中的文本内容，并去除前后空格
         tbody_rows = [td_tag.text.strip() for td_tag in td_tags]
+
+        # 检查提取的行数据是否满足特定条件：共有8列，第一列为空，第三列是数字类型的字符串
         if len(tbody_rows) == 8 and tbody_rows[0] == '' and isinstance(tbody_rows[2], str) and tbody_rows[2].isdigit():
+            # 如果满足条件，则将该行数据添加到结果列表中，并记录日志
             result_data.append(tbody_rows)
             logging.debug(f"Added proxylistplus row: {tbody_rows}")
 
+    # 输出最终的结果列表，并返回
     logging.debug(f"Final proxylistplus result data: {result_data}")
     return result_data
 
