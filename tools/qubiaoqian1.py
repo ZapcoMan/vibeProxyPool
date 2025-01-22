@@ -110,7 +110,6 @@ def ip3366_table(table):
     }
     # 遍历tbody下的所有<tr>元素
 
-
     for row in tbody.find_all("tr"):
         # 获取当前<tr>元素下的所有<td>元素
         cols = row.find_all("td")
@@ -123,10 +122,10 @@ def ip3366_table(table):
             # 记录添加的行数据
             logging.debug(f"Added ip3366 row: {row_data}")
 
-# 记录最终处理后的数据列表
-logging.debug(f"Final ip3366 result data: {tbody_rows}")
-# 返回处理后的数据列表
-return tbody_rows
+    # 记录最终处理后的数据列表
+    logging.debug(f"Final ip3366 result data: {tbody_rows}")
+    # 返回处理后的数据列表
+    return tbody_rows
 
 
 def openproxy_table(url):
