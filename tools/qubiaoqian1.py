@@ -1,7 +1,9 @@
-import re
-import requests
-from data import canshu
 import logging
+import re
+
+import requests
+
+from data import canshu
 
 # 配置日志记录器
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -106,15 +108,25 @@ def ip3366_table(table):
         "响应速度": "",
         "录取时间": ""
     }
+    # 遍历tbody下的所有<tr>元素
+
+
     for row in tbody.find_all("tr"):
+        # 获取当前<tr>元素下的所有<td>元素
         cols = row.find_all("td")
+        # 检查列的数量是否为7，以确保数据结构正确
         if len(cols) == 7:
+            # 构造行数据列表，替换特定关键词为其对应值
             row_data = [cols[i].text.strip().replace(key, value) for i, (key, value) in enumerate(replacements.items())]
+            # 将处理后的行数据添加到tbody_rows列表中
             tbody_rows.append(row_data)
+            # 记录添加的行数据
             logging.debug(f"Added ip3366 row: {row_data}")
 
-    logging.debug(f"Final ip3366 result data: {tbody_rows}")
-    return tbody_rows
+# 记录最终处理后的数据列表
+logging.debug(f"Final ip3366 result data: {tbody_rows}")
+# 返回处理后的数据列表
+return tbody_rows
 
 
 def openproxy_table(url):
