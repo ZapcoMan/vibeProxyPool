@@ -19,13 +19,19 @@ def is_proxy_available(proxy, proxy_type):
     """
     # 根据代理类型选择合适的URL
     url = 'https://www.baidu.com/' if proxy_type.upper() == 'HTTPS' else 'http://www.baidu.com/'
+    url2 = 'https://www.hao123.com/' if proxy_type.upper() == 'HTTPS' else 'http://www.hao123.com/'
+    url3 = 'https://www.2345.com/' if proxy_type.upper() == 'HTTPS' else 'http://www.2345.com/'
 
     try:
         # 使用requests库通过代理发送GET请求
         response = requests.get(url, proxies={proxy_type.lower(): proxy}, timeout=5)
+        response2 = requests.get(url2, proxies={proxy_type.lower(): proxy}, timeout=5)
+        response3 = requests.get(url3, proxies={proxy_type.lower(): proxy}, timeout=5)
 
         # 检查响应状态码和响应内容中的origin字段是否与代理地址一致
-        if response.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]:
+        if (response.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]
+                and response2.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]
+                and response3.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]):
             # 如果检查通过，打印代理地址并返回True
             print(f"proxy: {proxy}")
             return True
@@ -35,6 +41,7 @@ def is_proxy_available(proxy, proxy_type):
 
     # 如果检查失败或发生异常，返回False
     return False
+
 
 def filter_proxies():
     # 获取当前目录的上一层目录
@@ -77,6 +84,3 @@ def filter_proxies():
         json.dump(available_proxies, file, ensure_ascii=False, indent=4)
 
     return available_proxies
-
-
-
