@@ -17,7 +17,7 @@ def is_proxy_available(proxy):
     :return: 如果代理可用，返回 True；否则返回 False
     """
     try:
-        response = requests.get('http://www.baidu.com/', proxies={"http": proxy, "https": proxy}, timeout=5)
+        response = requests.get('https://www.baidu.com/', proxies={"http": proxy, "https": proxy}, timeout=5)
         if response.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]:
             print(f"proxy: {proxy}")
             return True
@@ -28,9 +28,11 @@ def is_proxy_available(proxy):
 
 def filter_proxies():
     # 获取当前目录的上一层目录
-    parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+    parent_dir = os.getcwd()
+    print(f"{parent_dir}")
     # 构建 proxies_filter.json 文件的完整路径
     input_file_path = os.path.join(parent_dir, 'output', 'proxies.json')
+    print(f"{input_file_path}")
     # 构建输出文件的完整路径
     output_file_path = os.path.join(parent_dir, 'output', 'available_proxies.json')
 
@@ -56,7 +58,4 @@ def filter_proxies():
     return available_proxies
 
 
-# 示例调用
-if __name__ == "__main__":
-    proxies_filter = filter_proxies()
-    print(f"可用的代理已保存到 proxies_filter.json 文件中，共 {len(proxies_filter)} 个可用代理")
+

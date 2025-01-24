@@ -7,6 +7,7 @@ import subprocess
 import sys
 from io import StringIO
 
+from tools.filterProxies import filter_proxies
 from vibeGet import zdaye, ihuan, ip3366, proxylistplus, openproxy
 
 # 定义输出目录常量
@@ -171,6 +172,7 @@ def main():
             # # 将代理池地址以 JSON 格式保存到文件中
             with open(os.path.join(OUTPUT_DIR, 'proxies.json'), 'w', encoding='utf-8') as f:
                 json.dump(all_proxies, f, ensure_ascii=False, indent=4)
+            proxies_filter = filter_proxies()
 
     except Exception as e:
         # 记录发生的错误
@@ -186,3 +188,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    proxies_filter = filter_proxies()
+    print(f"可用的代理已保存到 proxies_filter.json 文件中，共 {len(proxies_filter)} 个可用代理")
