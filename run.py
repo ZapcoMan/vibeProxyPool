@@ -165,9 +165,10 @@ def main():
         if args.save_output:
             logging.info("将 获取到的代理地址池 保存到 本地")
             # 如果输出目录不存在，则创建目录
+            print(f"保存 之前输出一下{all_proxies}")
             if not os.path.exists(OUTPUT_DIR):
                 os.makedirs(OUTPUT_DIR)
-            # 将代理池地址以 JSON 格式保存到文件中
+            # # 将代理池地址以 JSON 格式保存到文件中
             with open(os.path.join(OUTPUT_DIR, 'proxies.json'), 'w', encoding='utf-8') as f:
                 json.dump(all_proxies, f, ensure_ascii=False, indent=4)
 
