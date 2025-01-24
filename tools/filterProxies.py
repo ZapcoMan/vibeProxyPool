@@ -17,14 +17,23 @@ def is_proxy_available(proxy, proxy_type):
     :param proxy_type: 代理类型，例如 "HTTP" 或 "HTTPS"
     :return: 如果代理可用，返回 True；否则返回 False
     """
+    # 根据代理类型选择合适的URL
     url = 'https://www.baidu.com/' if proxy_type.upper() == 'HTTPS' else 'http://www.baidu.com/'
+
     try:
+        # 使用requests库通过代理发送GET请求
         response = requests.get(url, proxies={proxy_type.lower(): proxy}, timeout=5)
+
+        # 检查响应状态码和响应内容中的origin字段是否与代理地址一致
         if response.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]:
+            # 如果检查通过，打印代理地址并返回True
             print(f"proxy: {proxy}")
             return True
     except requests.RequestException:
+        # 如果发生请求异常，不做任何处理
         pass
+
+    # 如果检查失败或发生异常，返回False
     return False
 
 def filter_proxies():
@@ -42,14 +51,25 @@ def filter_proxies():
         proxies = json.load(file)
 
     # 过滤出可用的代理
+    # 初始化可用代理列表
     available_proxies = []
+
+    # 遍历所有代理信息
     for proxy_info in proxies:
+        # 获取代理的IP地址
         ip = proxy_info.get("IP地址")
+        # 获取代理的端口
         port = proxy_info.get("端口")
+        # 获取代理的类型
         proxy_type = proxy_info.get("类型")
+
+        # 检查IP、端口和类型是否都有效
         if ip and port and proxy_type:
+            # 构造代理URL
             proxy = f"{proxy_type.lower()}://{ip}:{port}"
+            # 检查代理是否可用
             if is_proxy_available(proxy, proxy_type):
+                # 如果可用，添加到可用代理列表
                 available_proxies.append(proxy)
 
     # 将可用的代理写入新的文件
