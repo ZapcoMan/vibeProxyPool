@@ -189,4 +189,4 @@ def main():
 if __name__ == "__main__":
     main()
     proxies_filter = filter_proxies()
-    print(f"可用的代理已保存到 proxies_filter.json 文件中，共 {len(proxies_filter)} 个可用代理")
+    logging.info(f"可用的代理已保存到 proxies_filter.json 文件中，共 {len(proxies_filter)} 个可用代理")
