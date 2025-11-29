@@ -1,11 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-import data.canshu
-from data import canshu
+from data import chromedriver_config
+from data.user_agent_utils import get_random_user_agent
+from data.config_manager import get_decrypted_url
 from tools.qubiaoqian1 import parse_table,ihuan_table,proxylistplus_table,ip3366_table,openproxy_table
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
 def zdaye():
     """
     从指定的 URL 中获取代理信息。
@@ -15,7 +17,7 @@ def zdaye():
     """
     try:
         # 发起 GET 请求
-        response = requests.get(data.canshu.url1, headers=data.canshu.url1_headers, timeout=10)
+        response = requests.get(get_decrypted_url('zdaye', 'url1_encrypted'), headers={"User-Agent": get_random_user_agent()}, timeout=10)
         response.raise_for_status()  # 检查 HTTP 状态码
         response.encoding = response.apparent_encoding
 
@@ -29,7 +31,7 @@ def zdaye():
         tbody_rows = parse_table(tbody)
 
         # 打印表头和内容
-        print("信息:", data.canshu.url1_thead)
+        print("信息:", ['IP地址', '端口', '类型', '地理位置', '上次验证', 'https', 'post', '响应时间', '已存活时间'])
         proxies = []
         for row in tbody_rows:
             print("内容:", row)
@@ -63,12 +65,12 @@ def ihuan():
         chrome_options.add_argument('--headless')
 
         # 使用Service指定chromedriver路径
-        service = Service(canshu.driver_path)
+        service = Service(chromedriver_config.driver_path)
 
         # 创建webdriver实例
         driver = webdriver.Chrome(service=service, options=chrome_options)
         # 打开页面
-        driver.get(canshu.url2)
+        driver.get(get_decrypted_url('ihuan', 'url2_encrypted'))
 
         # 等待页面加载完成
         driver.implicitly_wait(10)  # 最多等待10秒
@@ -130,7 +132,7 @@ def ip3366():
     """
     try:
         # 发起 GET 请求
-        response = requests.get(data.canshu.url3, headers=data.canshu.url1_headers, timeout=10)
+        response = requests.get(get_decrypted_url('ip3366', 'url3_encrypted'), headers={"User-Agent": get_random_user_agent()}, timeout=10)
         response.raise_for_status()  # 检查 HTTP 状态码
         response.encoding = response.apparent_encoding  # 设置编码
 
@@ -170,7 +172,7 @@ def proxylistplus():
     """
     try:
         # 发起 GET 请求
-        response = requests.get(data.canshu.url4, headers=data.canshu.url1_headers, timeout=10)
+        response = requests.get(get_decrypted_url('proxylistplus', 'url4_encrypted'), headers={"User-Agent": get_random_user_agent()}, timeout=10)
         response.raise_for_status()  # 检查 HTTP 状态码
         response.encoding = response.apparent_encoding  # 设置编码
 
@@ -215,13 +217,13 @@ def openproxy():
     try:
         # 打印http代理列表
         print('http代理如下：')
-        tables0 = openproxy_table(data.canshu.url5_http)
+        tables0 = openproxy_table(get_decrypted_url('openproxy', 'url5_http_encrypted'))
         # 打印socks4代理列表
         print('socks4代理如下：')
-        tables1 = openproxy_table(data.canshu.url5_socks4)
+        tables1 = openproxy_table(get_decrypted_url('openproxy', 'url5_socks4_encrypted'))
         # 打印socks5代理列表
         print('socks5代理如下：')
-        tables2 = openproxy_table(data.canshu.url5_socks5)
+        tables2 = openproxy_table(get_decrypted_url('openproxy', 'url5_socks5_encrypted'))
 
         # 初始化代理列表
         proxies = []

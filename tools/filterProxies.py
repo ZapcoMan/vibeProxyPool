@@ -9,7 +9,7 @@ import os
 import json
 import requests
 
-
+timeout = 20000
 def is_proxy_available(proxy, proxy_type):
     """
     检查代理是否可用。
@@ -24,9 +24,9 @@ def is_proxy_available(proxy, proxy_type):
 
     try:
         # 使用requests库通过代理发送GET请求
-        response = requests.get(url, proxies={proxy_type.lower(): proxy}, timeout=5)
-        response2 = requests.get(url2, proxies={proxy_type.lower(): proxy}, timeout=5)
-        response3 = requests.get(url3, proxies={proxy_type.lower(): proxy}, timeout=5)
+        response = requests.get(url, proxies={proxy_type.lower(): proxy}, timeout=timeout)
+        response2 = requests.get(url2, proxies={proxy_type.lower(): proxy}, timeout=timeout)
+        response3 = requests.get(url3, proxies={proxy_type.lower(): proxy}, timeout=timeout)
 
         # 检查响应状态码和响应内容中的origin字段是否与代理地址一致
         if (response.status_code == 200 and response.json().get('origin') == proxy.split('//')[1]

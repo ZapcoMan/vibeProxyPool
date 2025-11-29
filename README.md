@@ -42,7 +42,7 @@ python run.py -op
 ~~~
 ## 配置说明
 ### URL 配置
-在 `data/canshu.py` 文件中，你可以找到各个网站的 URL 和请求头配置。根据需要修改这些配置。
+在 `data` 目录下，你可以找到各个网站的 URL 和请求头配置。根据需要修改这些配置。
 
 ### ChromeDriver 配置
 确保 `data/canshu.py` 文件中的 `driver_path` 和 `chrome_path` 变量指向正确的 ChromeDriver 和 Chrome 浏览器路径。
